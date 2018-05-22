@@ -61,7 +61,9 @@
 (define-struct tank (x dir))
 ;; Tank is (make-tank Number Integer[-1, 1])
 ;; interp. the tank location is x, HEIGHT - TANK-HEIGHT/2 in screen coordinates
-;;         the tank moves TANK-SPEED pixels per clock tick left if dir -1, right if dir 1
+;;         the tank moves TANK-SPEED pixels per clock tick:
+;;                                          - left if dir -1,
+;;                                          - right if dir 1
 
 (define T0 (make-tank (/ WIDTH 2) 1))   ;center going right
 (define T1 (make-tank 50 1))            ;going right
@@ -101,7 +103,7 @@
   (... (missile-x m) (missile-y m)))
 
 
-(define G0 (make-game empty empty T0)) ; tank in the middle of screen and going right
+(define G0 (make-game empty empty T0)) ; tank in middle, going right
 (define G1 (make-game empty empty T1))
 (define G2 (make-game (list I1) (list M1) T1))
 (define G3 (make-game (list I1 I2) (list M1 M2) T1))
@@ -122,9 +124,19 @@
             (on-key    handle-keys)))   ; Game KeyEvent -> Game
 
 ;; Game -> Game
-;; produce the next ...
-;; !!!
-(define (handle-tick g) ...)
+;; produce the next world state: next invaders, next missiles, next tank
+(check-expect (handle-tick G0)
+              (make-game empty
+                         empty
+                         (make-tank (+ (/ WIDTH 2) TANK-DX)
+                                    1)))
+(check-expect (handle-tick G1)
+              (make-game empty
+                         empty
+                         (make-tank (- 50 TANK-DX)
+                                    -1)))
+
+(define (handle-tick g) (make-game empty empty (make-tank (/ WIDTH 2) 1)));stub: G0
 
 
 ;; Game -> Image
