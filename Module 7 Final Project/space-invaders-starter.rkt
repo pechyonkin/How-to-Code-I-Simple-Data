@@ -6,22 +6,22 @@
 
 ;; Space Invaders
 
-
+;; =================
 ;; Constants:
 
 (define WIDTH  300)
 (define HEIGHT 500)
 
-(define INVADER-X-SPEED 1.5)  ;speeds (not velocities) in pixels per tick
-(define INVADER-Y-SPEED 1.5)
-(define TANK-SPEED 2)
-(define MISSILE-SPEED 10)
+(define INVADER-DX 1.5)  ;speeds (not velocities) in pixels per tick
+(define INVADER-DY 1.5)
+(define TANK-DX 2)
+(define MISSILE-DY 10)
 
 (define HIT-RANGE 10)
 
-(define INVADE-RATE 100)
+(define INVADE-RATE 100) ; what is this?
 
-(define BACKGROUND (empty-scene WIDTH HEIGHT))
+(define MTS (empty-scene WIDTH HEIGHT))
 
 (define INVADER
   (overlay/xy (ellipse 10 15 "outline" "blue")              ;cockpit cover
@@ -40,7 +40,7 @@
 (define MISSILE (ellipse 5 15 "solid" "red"))
 
 
-
+;; =================
 ;; Data Definitions:
 
 (define-struct game (invaders missiles tank))
@@ -101,9 +101,49 @@
   (... (missile-x m) (missile-y m)))
 
 
-
-(define G0 (make-game empty empty T0))
+(define G0 (make-game empty empty T0)) ; tank in the middle of screen and going right
 (define G1 (make-game empty empty T1))
 (define G2 (make-game (list I1) (list M1) T1))
 (define G3 (make-game (list I1 I2) (list M1 M2) T1))
 
+;; =================
+;; Functions
+
+
+;; Game -> Game
+;; starts the world with only the tank in the middle
+;; start by running (main G0)
+
+(define (main g)
+  (big-bang g                           ; Game
+            (on-tick   handle-tick)     ; Game -> Game
+            (to-draw   render-game)     ; Game -> Image
+            (stop-when finish-game?)    ; Game -> Boolean
+            (on-key    handle-keys)))   ; Game KeyEvent -> Game
+
+;; Game -> Game
+;; produce the next ...
+;; !!!
+(define (handle-tick g) ...)
+
+
+;; Game -> Image
+;; render ... 
+;; !!!
+(define (render-game g) ...)
+
+
+;; Game -> Boolean
+;; check if game needs to end
+;; !!!
+(define (finish-game? g) ...)
+
+
+;; Game KeyEvent -> Game
+;; change tank's movement direction, fire rockets
+;; !!!
+;; <template from the HtDW recipe>
+(define (handle-keys g ke)
+  (cond [(key=? ke " ") (... g)]
+        [else 
+         (... g)]))
