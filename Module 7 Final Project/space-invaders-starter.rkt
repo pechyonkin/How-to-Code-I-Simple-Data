@@ -52,10 +52,9 @@
 
 #;
 (define (fn-for-game s)
-  (... (fn-for-loinvader (game-invaders s))
+  (... (fn-for-loi (game-invaders s))
        (fn-for-lom (game-missiles s))
        (fn-for-tank (game-tank s))))
-
 
 
 (define-struct tank (x dir))
@@ -74,7 +73,6 @@
   (... (tank-x t) (tank-dir t)))
 
 
-
 (define-struct invader (x y dx))
 ;; Invader is (make-invader Number Number Number)
 ;; interp. the invader is at (x, y) in screen coordinates
@@ -84,10 +82,25 @@
 (define I2 (make-invader 150 HEIGHT -10))       ;exactly landed, moving left
 (define I3 (make-invader 150 (+ HEIGHT 10) 10)) ;> landed, moving right
 
-
 #;
 (define (fn-for-invader invader)
   (... (invader-x invader) (invader-y invader) (invader-dx invader)))
+
+
+;; ListOfInvader is one of:
+;; - empty
+;; - (cons Invader ListOfInvader)
+;; interp. list of invaders
+(define LOI0 empty)
+(define LOI1 (cons I1 empty))
+(define LOI2 (cons I2  LOI1))
+(define LOI3 (list I1 I2 I3))
+
+#;
+(define (fn-for-loi loi)
+  (cond [(empty? loi) (...)]
+        [else (... (fn-for-invader (first loi)) ; reference
+                   (fn-for-loi  (rest loi)))])) ; self-reference
 
 
 (define-struct missile (x y))
@@ -101,6 +114,22 @@
 #;
 (define (fn-for-missile m)
   (... (missile-x m) (missile-y m)))
+
+
+;; ListOfMissile is one of:
+;; - empty
+;; - (cons Missile ListOfMissile)
+;; interp. a list of missiles
+(define LOM0 empty)
+(define LOM1 (cons M1 empty))
+(define LOM2 (cons M2  LOM1))
+(define LOM3 (list M1 M2 M3))
+
+#;
+(define (fn-for-lom lom)
+  (cond [(empty? lom) (...)]
+        [else (... (fn-for-missile (first lom)) ; reference
+                   (fn-for-lom  (rest lom)))])) ; self-reference
 
 
 (define G0 (make-game empty empty T0)) ; tank in middle, going right
