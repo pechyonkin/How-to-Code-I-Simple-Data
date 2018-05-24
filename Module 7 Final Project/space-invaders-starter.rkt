@@ -135,7 +135,17 @@
                          empty
                          (make-tank (- 50 TANK-DX)
                                     -1)))
-
+(check-expect (handle-tick
+               (make-game (list (make-invader 150 100 12) ;not landed, going right, hit by missile
+                                (make-invader 150 HEIGHT -10)) ;exactly landed, moving left
+                          (list (make-missile 150 300)                               ; not hit
+                                (make-missile
+                                 (invader-x (make-invader 150 100 12))
+                                 (+ (invader-y (make-invader 150 100 12)) 10))) ; exactly hits
+                          (make-tank 50 1))) ; tank going right
+              (make-game (list (make-invader (- 150 10) (+ HEIGHT 10) -10))
+                         (list (make-missile 150 (+ 300 MISSILE-DY)))
+                         (make-tank (+ 50 TANK-DX) 1))) ; G3 -> new state
 (define (handle-tick g) (make-game empty empty (make-tank (/ WIDTH 2) 1)));stub: G0
 
 
