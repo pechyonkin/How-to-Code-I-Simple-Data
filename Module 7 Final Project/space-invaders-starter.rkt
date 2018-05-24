@@ -124,7 +124,7 @@
             (on-key    handle-keys)))   ; Game KeyEvent -> Game
 
 ;; Game -> Game
-;; produce the next world state: next invaders, next missiles, next tank
+;; composition: process collisions and them move all elements
 (check-expect (handle-tick G0)
               (make-game empty
                          empty
@@ -146,7 +146,41 @@
               (make-game (list (make-invader (- 150 10) (+ HEIGHT 10) -10))
                          (list (make-missile 150 (+ 300 MISSILE-DY)))
                          (make-tank (+ 50 TANK-DX) 1))) ; G3 -> new state
-(define (handle-tick g) (make-game empty empty (make-tank (/ WIDTH 2) 1)));stub: G0
+
+;(define (handle-tick g) (make-game empty empty (make-tank (/ WIDTH 2) 1)));stub: G0
+;; <template from Game>
+(define (handle-tick g)
+  (next-game (process-collisions g)))
+
+
+;; Game -> Game
+;; detect collisions and remove corresponding invaders and rockets
+;; !!!
+(define (process-collisions g) g) ; stub
+
+
+;; Game -> Game
+;; produce next game by properly moving invaders, missiles and tank
+;; !!!
+(define (next-game g) g) ; stub
+
+
+;; ListOfInvader -> ListOfInvader
+;; produce next list of invaders
+;; !!!
+(define (next-invaders loi) loi) ; stub
+
+
+;; ListOfMissile -> ListOfMissile
+;; produce next list of missiles
+;; !!!
+(define (next-missiles lom) lom) ; stub
+
+
+;; Tank -> Tank
+;; produce next tank
+;; !!!
+(define (next-tank t) t) ; stub
 
 
 ;; Game -> Image
