@@ -258,8 +258,15 @@
 
 
 ;; Game -> Image
-;; render ... 
-;; !!!
+;; place invaders, tank and missiles on screen
+(check-expect (render-game G0)
+              (place-image TANK (tank-x (game-tank G0)) (- HEIGHT TANK-HEIGHT/2) MTS))
+(check-expect (render-game G2)
+              (place-image TANK (tank-x (game-tank G2)) (- HEIGHT TANK-HEIGHT/2)
+                           (place-image INVADER (invader-x I1) (invader-y I1)
+                                        (place-image MISSILE (missile-x M1) (missile-y M1) MTS))))
+
+ 
 (define (render-game g) MTS)
 
 
