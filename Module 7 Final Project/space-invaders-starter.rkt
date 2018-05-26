@@ -230,9 +230,26 @@
 
 
 ;; Tank -> Tank
-;; produce next tank
-;; !!!
-(define (next-tank t) (make-tank 50 1)) ; stub
+;; produce next tank with correctly changing direction at edges of screen
+(check-expect (next-tank (make-tank (/ WIDTH 2) 1))    ; center, going right
+              (make-tank (+ (/ WIDTH 2) TANK-DX) 1))
+(check-expect (next-tank (make-tank (/ WIDTH 2) -1))   ; center, going left
+              (make-tank (- (/ WIDTH 2) TANK-DX) -1))
+(check-expect (next-tank (make-tank (- WIDTH 1) 1))    ; right edge, going right
+              (make-tank WIDTH -1))
+(check-expect (next-tank (make-tank 1 -1))             ; left edge, going left
+              (make-tank 0 1))
+
+;(define (next-tank t) (make-tank 50 1)) ; stub
+(define (next-tank t)
+  (cond [(and (> (+ (tank-x t) TANK-DX) WIDTH) (= (tank-dir t) 1)) ; right edge, going right
+         (make-tank WIDTH -1)]
+        [(and (< (- (tank-x t) TANK-DX) 0) (= (tank-dir t) -1))    ; left edge, going left
+         (make-tank 0 1)]
+        [(= (tank-dir t) 1)                                        ; no edge, going right
+         (make-tank (+ (tank-x t) TANK-DX) (tank-dir t))]
+        [(= (tank-dir t) -1)                                       ; no edge, going left
+         (make-tank (- (tank-x t) TANK-DX) (tank-dir t))]))
 
 
 ;; Game -> Image
