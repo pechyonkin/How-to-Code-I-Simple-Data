@@ -281,8 +281,28 @@
 
 ;; Tank Image -> Image
 ;; place the tank on the image
-;; !!!
-(define (render-tank t img) MTS)
+(check-expect (render-tank T0 MTS)
+              (place-image TANK
+                           (tank-x T0)
+                           (- HEIGHT TANK-HEIGHT/2)
+                           MTS))
+(check-expect (render-tank T1 MTS)
+              (place-image TANK
+                           (tank-x T1)
+                           (- HEIGHT TANK-HEIGHT/2)
+                           MTS))
+(check-expect (render-tank T2 MTS)
+              (place-image TANK
+                           (tank-x T2)
+                           (- HEIGHT TANK-HEIGHT/2)
+                           MTS))
+
+;(define (render-tank t img) MTS)
+(define (render-tank t img)
+  (place-image TANK
+               (tank-x t)
+               (- HEIGHT TANK-HEIGHT/2)
+               img))
 
 
 ;; ListOfInvaders Image -> Image
