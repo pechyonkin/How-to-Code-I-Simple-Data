@@ -361,9 +361,12 @@
 
 ;; Game KeyEvent -> Game
 ;; change tank's movement direction, fire rockets
-;; !!!
 ;; <template from the HtDW recipe>
 (define (handle-keys g ke)
-  (cond [(key=? ke " ") (... g)]
-        [else 
-         (... g)]))
+  (cond [(key=? ke " ")
+         (make-game (game-invaders g)
+                    (cons (make-missile (tank-x (game-tank g))
+                                        (- HEIGHT TANK-HEIGHT/2))
+                          (game-missiles g))
+                    (game-tank g))]
+        [else g]))
