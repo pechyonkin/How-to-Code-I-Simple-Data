@@ -258,16 +258,43 @@
 
 
 ;; Game -> Image
-;; place invaders, tank and missiles on screen
+;; place missiles, invaders and tank on screen (in that order)
+;; function composition of 3 render functions
 (check-expect (render-game G0)
               (place-image TANK (tank-x (game-tank G0)) (- HEIGHT TANK-HEIGHT/2) MTS))
 (check-expect (render-game G2)
               (place-image TANK (tank-x (game-tank G2)) (- HEIGHT TANK-HEIGHT/2)
                            (place-image INVADER (invader-x I1) (invader-y I1)
                                         (place-image MISSILE (missile-x M1) (missile-y M1) MTS))))
+(check-expect (render-game G3)
+              (render-tank T1
+                           (render-invaders (game-invaders G3)
+                                            (render-missiles (game-missiles G3)
+                                                             MTS))))
 
- 
-(define (render-game g) MTS)
+;(define (render-game g) MTS) ; stub
+(define (render-game g)
+  (render-tank (game-tank g)
+               (render-invaders (game-invaders g)
+                                (render-missiles (game-missiles g)
+                                                 MTS))))
+
+;; Tank Image -> Image
+;; place the tank on the image
+;; !!!
+(define (render-tank t img) MTS)
+
+
+;; ListOfInvaders Image -> Image
+;; place invaders on the image
+;; !!!
+(define (render-invaders loi img) MTS)
+
+
+;; ListOfMissiles Image -> Image
+;; place missiles on the image
+;; !!!
+(define (render-missiles lom img) MTS)
 
 
 ;; Game -> Boolean
