@@ -164,8 +164,8 @@
 (check-expect (handle-tick G1)
               (make-game empty
                          empty
-                         (make-tank (- 50 TANK-DX)
-                                    -1)))
+                         (make-tank (+ 50 TANK-DX)
+                                    1)))
 (check-expect (handle-tick
                (make-game (list (make-invader 150 100 12) ;not landed, going right, hit by missile
                                 (make-invader 150 HEIGHT -10)) ;exactly landed, moving left
@@ -192,8 +192,13 @@
 
 ;; Game -> Game
 ;; produce next game by properly moving invaders, missiles and tank
-;; !!!
-(define (next-game g) g) ; stub
+;; tests handled by helpers
+
+;(define (next-game g) g) ; stub
+(define (next-game s)
+  (make-game (next-invaders (game-invaders s))
+             (next-missiles (game-missiles s))
+             (next-tank     (game-tank s))))
 
 
 ;; ListOfInvader -> ListOfInvader
