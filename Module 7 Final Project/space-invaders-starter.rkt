@@ -330,8 +330,27 @@
 
 ;; ListOfMissiles Image -> Image
 ;; place missiles on the image
-;; !!!
-(define (render-missiles lom img) MTS)
+(check-expect (render-missiles empty MTS) MTS)
+(check-expect (render-missiles (list M1 M2 M3) MTS)
+              (place-image MISSILE
+                           (missile-x M1)
+                           (missile-y M1)
+                           (place-image MISSILE
+                                        (missile-x M2)
+                                        (missile-y M2)
+                                        (place-image MISSILE
+                                                     (missile-x M3)
+                                                     (missile-y M3)
+                                                     MTS))))
+
+;(define (render-missiles lom img) MTS)
+
+(define (render-missiles lom img)
+  (cond [(empty? lom) img]
+        [else (place-image MISSILE
+                           (missile-x (first lom))
+                           (missile-y (first lom))
+                           (render-missiles (rest lom) img))]))
 
 
 ;; Game -> Boolean
