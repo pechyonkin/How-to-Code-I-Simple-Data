@@ -318,7 +318,14 @@
                             (invader-y I2)
                             MTS)))
 
-(define (render-invaders loi img) MTS)
+;(define (render-invaders loi img) MTS)
+
+(define (render-invaders loi img)
+  (cond [(empty? loi) img]
+        [else (place-image INVADER
+                           (invader-x (first loi))
+                           (invader-y (first loi))
+                           (render-invaders  (rest loi) img))]))
 
 
 ;; ListOfMissiles Image -> Image
