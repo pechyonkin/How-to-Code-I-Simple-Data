@@ -17,6 +17,8 @@
 (define TANK-DX 2)
 (define MISSILE-DY 10)
 
+(define MARGIN -10) ; remove object if beyound the screen edge + margin
+
 (define HIT-RANGE 10)
 
 (define INVADE-RATE 100) ; what is this?
@@ -202,14 +204,35 @@
 
 ;; ListOfMissile -> ListOfMissile
 ;; produce next list of missiles
-;; !!!
-(define (next-missiles lom) lom) ; stub
+(check-expect (next-missiles empty) empty) ; base case
+(check-expect (next-missiles (list (make-missile 50 75)                   ; move missile
+                                   (make-missile 0 HEIGHT)                ; move missile
+                                   (make-missile 100 MARGIN)))            ; remove missile
+              (list (make-missile 50 (- 75 MISSILE-DY)) ; minus because flies up
+                    (make-missile 0 (- HEIGHT MISSILE-DY))))
+
+;(define (next-missiles lom) lom) ; stub
+(define (next-missiles lom)
+  (cond [(empty? lom) empty]
+        [else (if (<= (missile-y (first lom)) MARGIN)
+                  (next-missiles  (rest lom))
+                  (cons (next-missile (first lom))
+                        (next-missiles  (rest lom))))]))
+
+
+;; Missile -> Missile
+;; move missile by MISSILE-DY
+(check-expect (next-missile M1) (make-missile 150 (- 300 MISSILE-DY)))
+ 
+;(define (next-missile m) (make-missile 0 0)) ; stub
+(define (next-missile m)
+  (make-missile (missile-x m) (- (missile-y m) MISSILE-DY)))
 
 
 ;; Tank -> Tank
 ;; produce next tank
 ;; !!!
-(define (next-tank t) t) ; stub
+(define (next-tank t) (make-tank 50 1)) ; stub
 
 
 ;; Game -> Image
