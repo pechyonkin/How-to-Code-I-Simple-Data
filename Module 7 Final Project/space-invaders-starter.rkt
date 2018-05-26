@@ -260,13 +260,13 @@
 ;; Game -> Image
 ;; render ... 
 ;; !!!
-(define (render-game g) ...)
+(define (render-game g) MTS)
 
 
 ;; Game -> Boolean
 ;; check if game needs to end
 ;; !!!
-(define (finish-game? g) ...)
+(define (finish-game? g) false)
 
 
 ;; Game KeyEvent -> Game
