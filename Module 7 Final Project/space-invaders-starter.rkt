@@ -307,7 +307,17 @@
 
 ;; ListOfInvaders Image -> Image
 ;; place invaders on the image
-;; !!!
+(check-expect (render-invaders empty MTS) MTS)
+(check-expect (render-invaders (list I1 I2) MTS)
+              (place-image INVADER
+                           (invader-x I1)
+                           (invader-y I1)
+                           (place-image
+                            INVADER
+                            (invader-x I2)
+                            (invader-y I2)
+                            MTS)))
+
 (define (render-invaders loi img) MTS)
 
 
