@@ -216,7 +216,7 @@
                                    -12)   ; move right, no bounce
                      (make-invader 1
                                    250
-                                   -10))  ; move right, bounce
+                                   -10)))  ; move right, bounce
                (list (make-invader (+ 150 12)
                                    (+ 100 INVADER-DY)
                                    12)
@@ -228,7 +228,7 @@
                                    -12)
                      (make-invader 0
                                    (+ 250 INVADER-DY)
-                                   10))))
+                                   10)))
 
 (define (next-invaders loi) loi) ; stub
 
