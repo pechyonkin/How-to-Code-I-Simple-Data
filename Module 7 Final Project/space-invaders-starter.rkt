@@ -15,7 +15,7 @@
 (define INVADER-DX 1.5)  ;speeds (not velocities) in pixels per tick
 (define INVADER-DY INVADER-DX)
 (define TANK-DX 2)
-(define MISSILE-DY 10)
+(define MISSILE-DY 15)
 
 (define MARGIN -10) ; remove object if beyound the screen edge + margin
 
@@ -175,8 +175,8 @@
                                  (invader-x (make-invader 150 100 12))
                                  (+ (invader-y (make-invader 150 100 12)) 10))) ; exactly hits
                           (make-tank 50 1))) ; tank going right
-              (make-game (list (make-invader (- 150 10) (+ HEIGHT 10) -10))
-                         (list (make-missile 150 (+ 300 MISSILE-DY)))
+              (make-game (list (make-invader (- 150 10) (+ HEIGHT INVADER-DY) -10))
+                         (list (make-missile 150 (- 300 MISSILE-DY)))
                          (make-tank (+ 50 TANK-DX) 1))) ; G3 -> new state
 
 ;(define (handle-tick g) (make-game empty empty (make-tank (/ WIDTH 2) 1)));stub: G0
@@ -200,7 +200,7 @@
                            (make-invader 100 90 7))
                           (list
                            (make-missile 68 93)  ; no hit second invader -> distance is >10
-                           (make-missile 100 89) ; no hit thirs envader -> distance is 11
+                           (make-missile 100 101) ; no hit thirs envader -> distance is 11
                            (make-missile 55 45)) ; hit first invader -> distance is 7
                           T0)) ; first invader and third missile need to go
               (make-game (list
@@ -208,7 +208,7 @@
                           (make-invader 100 90 7))
                          (list
                           (make-missile 68 93)
-                          (make-missile 100 89))
+                          (make-missile 100 101))
                          T0)) ; first invader and third missile gone
 
 ;(define (process-collisions g) g) ; stub
@@ -277,7 +277,7 @@
 (check-expect (within-blast-radius (make-invader 50 40 5)
                                    (make-missile 55 45)) true)
 (check-expect (within-blast-radius (make-invader 75 85 -5)
-                                   (make-missile 100 89)) false)
+                                   (make-missile 100 101)) false)
 (check-expect (within-blast-radius (make-invader 100 90 7)
                                    (make-missile 100 101)) false)
  
@@ -296,14 +296,48 @@
                              (make-invader 100 90 7))
                             (list
                              (make-missile 68 93)  ; no hit second invader -> distance is >10
-                             (make-missile 100 89) ; no hit thirs envader -> distance is 11
+                             (make-missile 100 101) ; no hit thirs envader -> distance is 11
                              (make-missile 55 45))); hit first invader -> distance is 7
               (list
                (make-missile 68 93)
-               (make-missile 100 89)))
+               (make-missile 100 101)))
 
-(define (hit-missiles loi lom) lom) ; stub
+;(define (hit-missiles loi lom) lom) ; stub
 
+(define (hit-missiles loi lom)
+  (cond [(empty? lom)
+         empty]
+        [(missile-hit loi (first lom))
+         (hit-missiles loi (rest lom))]
+        [else
+         (cons (first lom) (hit-missiles loi (rest lom)))]))
+
+
+;; ListOfInvader Missile -> Boolean
+;; true if the missile hit any of the invaders
+(check-expect (missile-hit (list
+                            (make-invader 50 40 5)
+                            (make-invader 75 85 -5)
+                            (make-invader 100 90 7))
+                           (make-missile 68 93)) false)
+(check-expect (missile-hit (list
+                            (make-invader 50 40 5)
+                            (make-invader 75 85 -5)
+                            (make-invader 100 90 7))
+                           (make-missile 100 101)) false)
+(check-expect (missile-hit (list
+                            (make-invader 50 40 5)
+                            (make-invader 75 85 -5)
+                            (make-invader 100 90 7))
+                           (make-missile 55 45)) true)
+
+;(define (missile-hit loi m) false) ; stub
+
+(define (missile-hit loi m)
+  (cond [(empty? loi) false]
+        [else (if (within-blast-radius (first loi) m)
+                  true
+                  (missile-hit (rest loi) m))]))
 
 ;; Game -> Game
 ;; produce next game by properly moving invaders, missiles and tank
