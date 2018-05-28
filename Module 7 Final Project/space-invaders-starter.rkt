@@ -83,6 +83,7 @@
 (define I1 (make-invader 150 100 12))           ;not landed, moving right
 (define I2 (make-invader 150 HEIGHT -10))       ;exactly landed, moving left
 (define I3 (make-invader 150 (+ HEIGHT 10) 10)) ;> landed, moving right
+(define I4 (make-invader (/ WIDTH 2) 0 INVADER-DX)) ; middle of screen, move right, for testing
 
 #;
 (define (fn-for-invader invader)
@@ -452,6 +453,10 @@
                     (flip-tank (game-tank g)))]
         [(and (key=? ke "right") (= (tank-dir (game-tank g)) -1))
          (make-game (game-invaders g)
+                    (game-missiles g)
+                    (flip-tank (game-tank g)))]
+        [(key=? ke "i")
+         (make-game (cons I4 (game-invaders g))
                     (game-missiles g)
                     (flip-tank (game-tank g)))]
         [else g]))
