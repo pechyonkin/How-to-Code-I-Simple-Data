@@ -369,4 +369,23 @@
                                         (- HEIGHT TANK-HEIGHT/2))
                           (game-missiles g))
                     (game-tank g))]
+        [(and (key=? ke "left") (= (tank-dir (game-tank g)) 1))
+         (make-game (game-invaders g)
+                    (game-missiles g)
+                    (flip-tank (game-tank g)))]
+        [(and (key=? ke "right") (= (tank-dir (game-tank g)) -1))
+         (make-game (game-invaders g)
+                    (game-missiles g)
+                    (flip-tank (game-tank g)))]
         [else g]))
+
+
+;; Tank -> Tank
+;; flip direction of tank
+(check-expect (flip-tank (make-tank 50  1)) (make-tank 50 -1))
+(check-expect (flip-tank (make-tank 30 -1)) (make-tank 30  1))
+
+;(define (flip-tank t) t)
+(define (flip-tank t)
+  (make-tank (tank-x t)
+             (* (tank-dir t) -1)))
