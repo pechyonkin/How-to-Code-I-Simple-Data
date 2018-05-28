@@ -204,14 +204,58 @@
                            (make-missile 55 45)) ; hit first invader -> distance is 7
                           T0)) ; first invader and third missile need to go
               (make-game (list
-                           (make-invader 75 85 -5)
-                           (make-invader 100 90 7))
-                          (list
-                           (make-missile 68 93)
-                           (make-missile 100 89))
-                          T0)) ; first invader and third missile gone
+                          (make-invader 75 85 -5)
+                          (make-invader 100 90 7))
+                         (list
+                          (make-missile 68 93)
+                          (make-missile 100 89))
+                         T0)) ; first invader and third missile gone
 
-(define (process-collisions g) g) ; stub
+;(define (process-collisions g) g) ; stub
+
+(define (process-collisions g)
+  (cond [(empty? (game-invaders g))
+         g]
+        [(empty? (game-missiles g))
+         g]
+        [else
+         (make-game (hit-invaders (game-invaders g) (game-missiles g))
+                    (hit-missiles (game-invaders g) (game-missiles g))
+                    (game-tank g))]))
+
+
+;; ListOfInvaders ListOfMissiles -> ListOfInvaders
+;; remove invaders that are hit by missiles
+(check-expect (hit-invaders (list
+                             (make-invader 50 40 5)
+                             (make-invader 75 85 -5)
+                             (make-invader 100 90 7))
+                            (list
+                             (make-missile 68 93)  ; no hit second invader -> distance is >10
+                             (make-missile 100 89) ; no hit thirs envader -> distance is 11
+                             (make-missile 55 45))); hit first invader -> distance is 7
+              (list
+               (make-invader 75 85 -5)
+               (make-invader 100 90 7)))
+
+(define (hit-invaders loi lom) loi) ; stub
+
+
+;; ListOfInvaders ListOfMissiles -> ListOfMissiles
+;; remove missiles that are hit by missiles
+(check-expect (hit-missiles (list
+                             (make-invader 50 40 5)
+                             (make-invader 75 85 -5)
+                             (make-invader 100 90 7))
+                            (list
+                             (make-missile 68 93)  ; no hit second invader -> distance is >10
+                             (make-missile 100 89) ; no hit thirs envader -> distance is 11
+                             (make-missile 55 45))); hit first invader -> distance is 7
+              (list
+               (make-missile 68 93)
+               (make-missile 100 89)))
+
+(define (hit-missiles loi lom) lom) ; stub
 
 
 ;; Game -> Game
