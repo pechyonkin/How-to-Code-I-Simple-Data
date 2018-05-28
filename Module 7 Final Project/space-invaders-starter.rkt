@@ -13,7 +13,7 @@
 (define HEIGHT 500)
 
 (define INVADER-DX 1.5)  ;speeds (not velocities) in pixels per tick
-(define INVADER-DY 1.5)
+(define INVADER-DY INVADER-DX)
 (define TANK-DX 2)
 (define MISSILE-DY 10)
 
@@ -202,13 +202,39 @@
 
 
 ;; ListOfInvader -> ListOfInvader
-;; produce next list of invaders
-;; !!!
+;; move invaders, bounce them off walls
+(check-expect (next-invaders empty) empty)
+(check-expect (next-invaders
+               (list (make-invader 150
+                                   100
+                                   12)    ; move left, no bounce
+                     (make-invader (- WIDTH 1)
+                                   75
+                                   10)    ; move left, bounce
+                     (make-invader 50
+                                   200
+                                   -12)   ; move right, no bounce
+                     (make-invader 1
+                                   250
+                                   -10))  ; move right, bounce
+               (list (make-invader (+ 150 12)
+                                   (+ 100 INVADER-DY)
+                                   12)
+                     (make-invader WIDTH
+                                   (+ 75 INVADER-DY)
+                                   -10)
+                     (make-invader (+ 50 -12)
+                                   (+ 200 INVADER-DY)
+                                   -12)
+                     (make-invader 0
+                                   (+ 250 INVADER-DY)
+                                   10))))
+
 (define (next-invaders loi) loi) ; stub
 
 
 ;; ListOfMissile -> ListOfMissile
-;; produce next list of missiles
+;; produce next list of missiles by advancing them, remove out of screen ones
 (check-expect (next-missiles empty) empty) ; base case
 (check-expect (next-missiles (list (make-missile 50 75)                   ; move missile
                                    (make-missile 0 HEIGHT)                ; move missile
