@@ -182,7 +182,13 @@
 ;(define (handle-tick g) (make-game empty empty (make-tank (/ WIDTH 2) 1)));stub: G0
 ;; <template from Game>
 (define (handle-tick g)
-  (next-game (process-collisions g)))
+  (next-game (process-collisions (pop-invaders g))))
+
+
+;; Game -> Game
+;; randomly make new invader appear at upper border of screen
+;; !!!
+(define (pop-invaders g) g) ; stub
 
 
 ;; Game -> Game
