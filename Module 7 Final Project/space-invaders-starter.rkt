@@ -217,20 +217,71 @@
                      (make-invader 1
                                    250
                                    -10)))  ; move right, bounce
-               (list (make-invader (+ 150 12)
-                                   (+ 100 INVADER-DY)
-                                   12)
-                     (make-invader WIDTH
-                                   (+ 75 INVADER-DY)
-                                   -10)
-                     (make-invader (+ 50 -12)
-                                   (+ 200 INVADER-DY)
-                                   -12)
-                     (make-invader 0
-                                   (+ 250 INVADER-DY)
-                                   10)))
+              (list (make-invader (+ 150 12)
+                                  (+ 100 INVADER-DY)
+                                  12)
+                    (make-invader WIDTH
+                                  (+ 75 INVADER-DY)
+                                  -10)
+                    (make-invader (+ 50 -12)
+                                  (+ 200 INVADER-DY)
+                                  -12)
+                    (make-invader 0
+                                  (+ 250 INVADER-DY)
+                                  10)))
 
-(define (next-invaders loi) loi) ; stub
+;(define (next-invaders loi) loi) ; stub
+
+(define (next-invaders loi)
+  (cond [(empty? loi) empty]
+        [else (cons (next-invader  (first loi))
+                    (next-invaders (rest loi)))]))
+
+
+;; Invader -> Invader
+;; move invader, bounce it off walls
+(check-expect (next-invader (make-invader 150
+                                          100
+                                          12))
+              (make-invader (+ 150 12)
+                            (+ 100 INVADER-DY)
+                            12)) ; move left, no bounce
+(check-expect (next-invader (make-invader (- WIDTH 1)
+                                          75
+                                          10))
+              (make-invader WIDTH
+                            (+ 75 INVADER-DY)
+                            -10)) ; move left, bounce
+(check-expect (next-invader (make-invader 50
+                                          200
+                                          -12))
+              (make-invader (+ 50 -12)
+                            (+ 200 INVADER-DY)
+                            -12)) ; move right, no bounce
+(check-expect (next-invader (make-invader 1
+                                          250
+                                          -10))
+              (make-invader 0
+                            (+ 250 INVADER-DY)
+                            10)) ; move right, bounce
+
+;(define (next-invader i) i) ; stub
+
+(define (next-invader i)
+  (cond [(and (> (+ (invader-x i) (invader-dx i)) WIDTH)
+              (> (invader-dx i) 0))
+         (make-invader WIDTH
+                       (+ (invader-y i) INVADER-DY)
+                       (* (invader-dx i) -1))] ; right edge, going right
+        [(and (< (+ (invader-x i) (invader-dx i)) 0)
+              (< (invader-dx i) 0))
+         (make-invader 0
+                       (+ (invader-y i) INVADER-DY)
+                       (* (invader-dx i) -1))] ; left edge, going left
+        [else
+         (make-invader (+ (invader-x i) (invader-dx i))
+                       (+ (invader-y i) INVADER-DY)
+                       (invader-dx i))])) ; other cases
 
 
 ;; ListOfMissile -> ListOfMissile
