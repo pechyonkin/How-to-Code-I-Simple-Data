@@ -232,13 +232,60 @@
                              (make-invader 100 90 7))
                             (list
                              (make-missile 68 93)  ; no hit second invader -> distance is >10
-                             (make-missile 100 89) ; no hit thirs envader -> distance is 11
+                             (make-missile 100 101) ; no hit thirs envader -> distance is 11
                              (make-missile 55 45))); hit first invader -> distance is 7
               (list
                (make-invader 75 85 -5)
                (make-invader 100 90 7)))
 
-(define (hit-invaders loi lom) loi) ; stub
+;(define (hit-invaders loi lom) loi) ; stub
+
+(define (hit-invaders loi lom)
+  (cond [(empty? loi)
+         empty]
+        [(invader-hit (first loi) lom)
+         (hit-invaders (rest loi) lom)]
+        [else
+         (cons (first loi) (hit-invaders (rest loi) lom))]))
+
+
+;; Invader ListOfMissiles -> Boolean
+;; produce true if invader is hit by one of the missiles
+(check-expect (invader-hit (make-invader 75 85 -5)
+                           (list
+                            (make-missile 68 93)
+                            (make-missile 100 101)
+                            (make-missile 55 45))) false) ; not hit by any missiles
+(check-expect (invader-hit (make-invader 50 40 5)
+                           (list
+                            (make-missile 68 93)
+                            (make-missile 100 101)
+                            (make-missile 55 45))) true) ; hit by third missile                           
+
+;(define (invader-hit i lom) false) ; stub
+
+;; <template for ListOfMissile>
+(define (invader-hit i lom)
+  (cond [(empty? lom) false]                       ; no missiles -> no hits
+        [(within-blast-radius i (first lom)) true] ; if close -> hit
+        [else
+         (invader-hit i (rest lom))]))             ; recursion
+
+
+;; Invader Missile -> Boolean
+;; true if invader and missile are HIT-RANGE or closer (by Euclidean distance)
+(check-expect (within-blast-radius (make-invader 50 40 5)
+                                   (make-missile 55 45)) true)
+(check-expect (within-blast-radius (make-invader 75 85 -5)
+                                   (make-missile 100 89)) false)
+(check-expect (within-blast-radius (make-invader 100 90 7)
+                                   (make-missile 100 101)) false)
+ 
+;(define (within-blast-radius i m) false) ; stub
+
+(define (within-blast-radius i m)
+  (<= (sqrt (+ (* (- (invader-x i) (missile-x m)) (- (invader-x i) (missile-x m)))
+               (* (- (invader-y i) (missile-y m)) (- (invader-y i) (missile-y m))))) HIT-RANGE))
 
 
 ;; ListOfInvaders ListOfMissiles -> ListOfMissiles
