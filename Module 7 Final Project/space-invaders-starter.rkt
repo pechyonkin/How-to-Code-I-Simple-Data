@@ -187,7 +187,30 @@
 
 ;; Game -> Game
 ;; detect collisions and remove corresponding invaders and rockets
-;; !!!
+(check-expect (process-collisions (make-game empty empty T0))
+              (make-game empty empty T0)) ; both loi and lom empty -> no change
+(check-expect (process-collisions (make-game empty (list M1 M2) T1))
+              (make-game empty (list M1 M2) T1)) ; loi empty -> no change
+(check-expect (process-collisions (make-game (list I1 I2) empty T2))
+              (make-game (list I1 I2) empty T2)) ; lom empty -> no change
+(check-expect (process-collisions
+               (make-game (list
+                           (make-invader 50 40 5)
+                           (make-invader 75 85 -5)
+                           (make-invader 100 90 7))
+                          (list
+                           (make-missile 68 93)  ; no hit second invader -> distance is >10
+                           (make-missile 100 89) ; no hit thirs envader -> distance is 11
+                           (make-missile 55 45)) ; hit first invader -> distance is 7
+                          T0)) ; first invader and third missile need to go
+              (make-game (list
+                           (make-invader 75 85 -5)
+                           (make-invader 100 90 7))
+                          (list
+                           (make-missile 68 93)
+                           (make-missile 100 89))
+                          T0)) ; first invader and third missile gone
+
 (define (process-collisions g) g) ; stub
 
 
