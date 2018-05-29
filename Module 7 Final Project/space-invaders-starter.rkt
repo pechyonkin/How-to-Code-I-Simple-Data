@@ -586,9 +586,58 @@
 
 
 ;; Game -> Boolean
-;; check if game needs to end
-;; !!!
-(define (finish-game? g) false)
+;; return true if game needs to end (one of invaders reached bottom of screen)
+(check-expect (finish-game? G0) false)
+(check-expect (finish-game?
+               (make-game
+                (list (make-invader 50 50 5)             ; invader in middle of screen
+                      (make-invader 50 (- HEIGHT 1) -5)) ; invader at bottom, about to end
+                empty
+                (make-tank 50 1))) false)
+(check-expect (finish-game?
+               (make-game
+                (list (make-invader 50 50 5)             ; invader in middle of screen
+                      (make-invader 50 HEIGHT -5))       ; invader at bottom, game ends
+                empty
+                (make-tank 50 1))) true)
+
+;(define (finish-game? g) false) ; stub
+
+(define (finish-game? g)
+  (invaders-at-bottom? (game-invaders g)))
+
+
+;; ListOfInvader -> Boolean
+;; return true if one of invaders reached bottom
+(check-expect (invaders-at-bottom? empty) false)
+(check-expect (invaders-at-bottom?
+               (list (make-invader 50 50 5)              ; invader in middle of screen
+                     (make-invader 50 (- HEIGHT 1) -5))) ; invader at bottom, about to end
+              false)
+(check-expect (invaders-at-bottom?
+               (list (make-invader 50 50 5)              ; invader in middle of screen
+                     (make-invader 50 HEIGHT -5)))       ; invader at bottom, game ends
+              true)
+
+;(define (invaders-at-bottom? loi) false) ; stub
+
+(define (invaders-at-bottom? loi)
+  (cond [(empty? loi)                       false]
+        [(invader-at-bottom?  (first loi))  true]
+        [else                               (invaders-at-bottom? (rest loi))]))
+
+
+;; Invader -> Boolean
+;; return true if invader reached bottom of screen
+(check-expect (invader-at-bottom? (make-invader 50 50            5)) false)
+(check-expect (invader-at-bottom? (make-invader 50 (- HEIGHT 1) -5)) false)
+(check-expect (invader-at-bottom? (make-invader 50 HEIGHT       -5)) true)
+(check-expect (invader-at-bottom? (make-invader 50 (+ HEIGHT 1)  5)) true)
+
+;(define (invader-at-bottom? i) false) ; stub
+
+(define (invader-at-bottom? i)
+  (>= (invader-y i) HEIGHT))
 
 
 ;; Game KeyEvent -> Game
