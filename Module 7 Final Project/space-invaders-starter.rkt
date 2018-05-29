@@ -41,6 +41,9 @@
 
 (define MISSILE (ellipse 5 15 "solid" "red"))
 
+(define RANDOM-MAX 100)
+(define RANDOM-INVADER 97)
+
 
 ;; =================
 ;; Data Definitions:
@@ -155,18 +158,13 @@
             (stop-when finish-game?)    ; Game -> Boolean
             (on-key    handle-keys)))   ; Game KeyEvent -> Game
 
-;; Game -> Game
-;; composition: process collisions and them move all elements
+;; Game Integer -> Game
+;; composition: process collisions and them move all elements, Integer is random
+;; tests only check composition
 (check-expect (handle-tick G0)
-              (make-game empty
-                         empty
-                         (make-tank (+ (/ WIDTH 2) TANK-DX)
-                                    1)))
+              (next-game (process-collisions (pop-invader G0))))
 (check-expect (handle-tick G1)
-              (make-game empty
-                         empty
-                         (make-tank (+ 50 TANK-DX)
-                                    1)))
+              (next-game (process-collisions (pop-invader G1))))
 (check-expect (handle-tick
                (make-game (list (make-invader 150 100 12) ;not landed, going right, hit by missile
                                 (make-invader 150 HEIGHT -10)) ;exactly landed, moving left
@@ -175,20 +173,39 @@
                                  (invader-x (make-invader 150 100 12))
                                  (+ (invader-y (make-invader 150 100 12)) 10))) ; exactly hits
                           (make-tank 50 1))) ; tank going right
-              (make-game (list (make-invader (- 150 10) (+ HEIGHT INVADER-DY) -10))
-                         (list (make-missile 150 (- 300 MISSILE-DY)))
-                         (make-tank (+ 50 TANK-DX) 1))) ; G3 -> new state
+              (next-game
+               (process-collisions
+                (pop-invader
+                 (make-game (list (make-invader 150 100 12)    ;not landed, going right, hit by missile
+                                (make-invader 150 HEIGHT -10)) ;exactly landed, moving left
+                          (list (make-missile 150 300)         ; not hit
+                                (make-missile
+                                 (invader-x (make-invader 150 100 12))
+                                 (+ (invader-y (make-invader 150 100 12)) 10))) ; exactly hits
+                          (make-tank 50 1)))))) ; G3 -> new state
 
 ;(define (handle-tick g) (make-game empty empty (make-tank (/ WIDTH 2) 1)));stub: G0
 ;; <template from Game>
 (define (handle-tick g)
-  (next-game (process-collisions (pop-invaders g))))
+  (next-game (process-collisions (pop-invader g))))
 
 
 ;; Game -> Game
 ;; randomly make new invader appear at upper border of screen
-;; !!!
-(define (pop-invaders g) g) ; stub
+
+;(define (pop-invader g) g) ; stub
+
+(define (pop-invader g)
+  (if (> (random RANDOM-MAX) RANDOM-INVADER)
+      (make-game (cons (make-invader (random WIDTH)
+                                     0
+                                     (if (> (random RANDOM-MAX) (/ RANDOM-MAX 2))
+                                         INVADER-DX
+                                         (* INVADER-DX -1)))
+                       (game-invaders g))
+                 (game-missiles g)
+                 (game-tank g))
+      g))
 
 
 ;; Game -> Game
